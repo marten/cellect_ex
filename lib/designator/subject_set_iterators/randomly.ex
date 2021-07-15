@@ -1,8 +1,8 @@
-defmodule Designator.RandomStream do
+defmodule Designator.SubjectSetIterators.Randomly do
   alias Designator.Random
 
-  @spec shuffle(Enumerable.t) :: Enumerable.t
-  def shuffle(enum) do
+  @spec apply_to(Enumerable.t) :: Enumerable.t
+  def apply_to(enum) do
     Stream.unfold({enum, MapSet.new}, fn {enum, drawn} ->
       if size(enum) <= MapSet.size(drawn) do
         nil

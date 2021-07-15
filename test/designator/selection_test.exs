@@ -61,6 +61,15 @@ defmodule Designator.SelectionTest do
     assert Selection.select(338, 1, [limit: 4]) == [4, 2, 3, 1]
   end
 
+  test "sequential selection for normal sets" do
+    Designator.Random.seed({123, 100020, 345345})
+    Designator.WorkflowCache.set(338, %{configuration: %{}, prioritized: true, subject_set_ids: [1000]})
+    Designator.UserCache.set({338, 1}, %{seen_ids: MapSet.new, recently_selected_ids: MapSet.new, configuration: %{}})
+    SubjectSetCache.set({338, 1000}, %SubjectSetCache{workflow_id: 338, subject_set_id: 1000, subject_ids: Array.from_list([98, 99, 10])})
+
+    assert Selection.select(338, 1, [limit: 6]) == [98, 99, 10]
+  end
+
   test "weighed selection for normal sets" do
     Designator.Random.seed({123, 100020, 345345})
     Designator.WorkflowCache.set(338, %{configuration: %{"subject_set_weights" => %{"1000" => 1, "1001" => 99, "1002" => 9.9, "1003" => 0.1}},

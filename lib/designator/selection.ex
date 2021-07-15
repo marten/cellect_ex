@@ -80,10 +80,18 @@ defmodule Designator.Selection do
   end
 
   @spec convert_to_streams([SubjectSetCache.t], Workflow.t) :: [SubjectStream.t]
-  def convert_to_streams(subject_sets, _workflow) do
+  def convert_to_streams(subject_sets, workflow) do
     Enum.map(subject_sets, fn subject_set ->
-      Designator.SubjectStream.build(subject_set)
+      Designator.SubjectStream.build(subject_set, prepare_iterator(workflow))
     end)
+  end
+
+  defp prepare_iterator(workflow) do
+    if workflow.prioritized do
+      Designator.SubjectSetIterators.Sequentially
+    else
+      Designator.SubjectSetIterators.Randomly
+    end
   end
 
   defp deduplicate(stream) do
